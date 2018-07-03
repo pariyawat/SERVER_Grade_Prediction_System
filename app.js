@@ -7,6 +7,8 @@ const cors = require('cors');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const auth = require('./auth/autentication')
+const loginRouter = require('./routes/login/login_rout');
 const subjectRouter = require('./routes/subjects/subjects');
 
 const app = express();
@@ -24,6 +26,14 @@ app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+// ตรวจ Token
+// app.use((req, res , next) =>{
+//   auth.verifyToken(req.header['authorization'], next);
+//   next();
+// })
+
+app.use('/api/login',loginRouter);
 app.use('/api/subject', subjectRouter);
 
 // catch 404 and forward to error handler
