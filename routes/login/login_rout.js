@@ -5,21 +5,46 @@ const login = require('../../service/login/login');
 
 
 router.post('/', (req, res, next) => {
-    let dataReq = req.body;
 
-    login.toLogin(dataReq, (err, row) => {
-        if (err) {
-            res.json(401, err)
-        } else if (row.length <= 0) {
-            res.json(401, "Can not login")
+    const dataReq = req.body;
+
+    login.toStudent(dataReq, (studenError, studentRow) => {
+        if (studenError) {
+            res.json(studenError);
+        } else if (studentRow.length <= 0) {
+            login.toTeacher(dataReq, (teacherError, teacherRow) => {
+                if (teacherError) {
+                    res.json(teacherError);
+                } else if (teacherRow <= 0) {
+                    login.toAdmin(dataReq, (adminError, adminRow) => {
+                        if (adminError) {
+                            res.json(adminError)
+                        } else if (adminRow <= 0) {
+                            res.json(401, "Can not login");
+                        } else {
+                            let dataAdmin = adminRow[0];
+                            let token = auth.createToken(dataAdmin.ID);
+                            dataAdmin['Token'] = token;
+                            res.json(dataAdmin);
+                            console.log(dataAdmin)
+                        }
+                    });
+                } else {
+                    let dataTeacher = teacherRow[0];
+                    let token = auth.createToken(dataTeacher.ID);
+                    dataTeacher['Token'] = token;
+                    res.json(dataTeacher);
+                    console.log(dataTeacher);
+                }
+            });
         } else {
-            let dataRes = row[0]
-            let token = auth.createToken(dataRes.ID)
-            dataRes['Token'] = token;
-            res.json(dataRes);
-            console.log(dataRes)
+            let dataStuden = studentRow[0];
+            let token = auth.createToken(dataStuden.ID);
+            dataStuden['Token'] = token;
+            res.json(dataStuden);
+            console.log(dataStuden)
         }
-    })
+    });
 
 });
 

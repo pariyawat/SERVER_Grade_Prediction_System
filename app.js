@@ -10,6 +10,7 @@ const usersRouter = require('./routes/users');
 const auth = require('./auth/autentication')
 const loginRouter = require('./routes/login/login_rout');
 const subjectRouter = require('./routes/subjects/subjects');
+const profileRouter = require('./routes/profile/profile')
 
 const app = express();
 
@@ -27,14 +28,17 @@ app.use(cors());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+app.use('/api/login',loginRouter);
+
 // ตรวจ Token
 // app.use((req, res , next) =>{
 //   auth.verifyToken(req.header['authorization'], next);
 //   next();
 // })
 
-app.use('/api/login',loginRouter);
+
 app.use('/api/subject', subjectRouter);
+app.use('/api/profile', profileRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
