@@ -11,6 +11,7 @@ const auth = require('./auth/autentication');
 const loginRouter = require('./routes/login/login_rout');
 const subjectRouter = require('./routes/subjects/subjects');
 const profileRouter = require('./routes/profile/profile');
+const addGradeStudentRouter = require('./routes/grade-history/add-grade-student');
 
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/login',loginRouter);
 
 app.use('/api/subject', subjectRouter);
 app.use('/api/profile', profileRouter);
+app.use('/api/add-grade-student',addGradeStudentRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
