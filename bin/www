@@ -96,4 +96,4 @@ function onListening() {
 
 const chalk = require('chalk');
 const logo = require('./start-ascii');
-console.log(chalk.green(logo));
+console.log(chalk.magenta(logo));

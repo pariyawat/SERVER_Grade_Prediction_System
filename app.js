@@ -7,10 +7,10 @@ const cors = require('cors');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const auth = require('./auth/autentication')
+const auth = require('./auth/autentication');
 const loginRouter = require('./routes/login/login_rout');
 const subjectRouter = require('./routes/subjects/subjects');
-const profileRouter = require('./routes/profile/profile')
+const profileRouter = require('./routes/profile/profile');
 
 const app = express();
 

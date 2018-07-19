@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const createError = require('http-errors');
 const auth = require('../../auth/autentication')
 const login = require('../../service/login/login');
 
@@ -26,7 +27,6 @@ router.post('/', (req, res, next) => {
                             let token = auth.createToken(dataAdmin.ID);
                             dataAdmin['Token'] = token;
                             res.json(dataAdmin);
-                            console.log(dataAdmin)
                         }
                     });
                 } else {
@@ -34,7 +34,6 @@ router.post('/', (req, res, next) => {
                     let token = auth.createToken(dataTeacher.ID);
                     dataTeacher['Token'] = token;
                     res.json(dataTeacher);
-                    console.log(dataTeacher);
                 }
             });
         } else {
@@ -42,7 +41,6 @@ router.post('/', (req, res, next) => {
             let token = auth.createToken(dataStuden.ID);
             dataStuden['Token'] = token;
             res.json(dataStuden);
-            console.log(dataStuden)
         }
     });
 
