@@ -5,7 +5,7 @@ const aboutGrade = {
         // let addGradeList;
         // for (let i = 0; i <= data.length; i++) {
         //     if (data[i].subject_id) {
-                addGradeList = `
+                 const addGradeList = `
                 INSERT INTO grade_history (student_id, subject_cpe, subject_name, course_id, grade) 
                 SELECT '${data.student_id}',T1.subject_cpe, T1.subject_name, T1.course_id, '${data.grade}' 
                 FROM (SELECT subject_cpe, subject_name,course_id  FROM subject LEFT JOIN subject_58   

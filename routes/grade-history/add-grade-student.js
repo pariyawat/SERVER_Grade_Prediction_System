@@ -5,29 +5,32 @@ const grade = require('../../service/grade-history/about-grade');
 router.post('/', (req, res, next) => {
     const data = req.body
 
-    let response = [];
+    let resData = [];
 
     for (let i = 0; i <= data.length; i++) {
-        if (data[i].subject_id) {
-            console.log(data[i].subject_id)
+        const id = data[i].subject_id || null;
+        if (id !== null) {
             grade.addGradeStudent(data[i], (err, row) => {
                 if (err) {
-                    data[i]['isUpdate'] = false;
-                    response.push(data[i]);
-                    console.log(err)
+                    resData.push(false)
                 } else {
-                    data[i]['isUpdate'] = true;
-                    response.push(data[i]);
-                    console.log(row)
+                    resData.push(true)
                 }
+
+
+
+
+
             })
         }
+
         if (i + 1 === data.length) {
-            res.json(response)
+            res.send(true);
         }
 
+
     }
-    console.log(response)
+
 
 });
 
