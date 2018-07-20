@@ -16,6 +16,7 @@ const aboutGrade = {
         // }
         // console.log(addGradeList);
         // return callback(false, "Calllllll");
+        // console.log(addGradeList)
         return db.query(addGradeList, callback)
     },
 
