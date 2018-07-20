@@ -5,14 +5,21 @@ const grade = require('../../service/grade-history/about-grade');
 router.post('/', (req, res, next) =>{
     const dataReq = req.body
     console.log(dataReq)
-    grade.addGradeStudent(dataReq,(err, row) => {
+
+    const res = [];
+
+    for (let i = 0; i <= data.length; i++) {
+    grade.addGradeStudent(data[i],(err, row) => {
         if(err){
-            res.json(err);
-            console.log("+++++++++++++++++",err)
+            data[i]['isUpdate'] = false;
+            res.push(data[i])
         }else {
-            res.json(row)
+            data[i]['isUpdate'] = true;
+            res.push(data[i])
         }
     })
+
+}
 });
 
 module.exports = router;
