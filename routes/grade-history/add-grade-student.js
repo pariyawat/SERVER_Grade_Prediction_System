@@ -7,7 +7,8 @@ router.post('/', (req, res, next) =>{
     console.log(dataReq)
     grade.addGradeStudent(dataReq,(err, row) => {
         if(err){
-            res.json(err)
+            res.json(err);
+            console.log("+++++++++++++++++",err)
         }else {
             res.json(row)
         }
