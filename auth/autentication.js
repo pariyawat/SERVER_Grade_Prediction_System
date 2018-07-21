@@ -4,8 +4,8 @@ const config = require('../config/secret');
 const createError = require('http-errors');
 const auth = {
 
-    createToken(ID){
-        let token = jwt.sign({id: ID}, config.secret, {expiresIn : 86400});
+    createToken(user){
+        let token = jwt.sign({activeUser: user}, config.secret, {expiresIn : 86400});
         return token;
     },
 
@@ -19,6 +19,16 @@ const auth = {
                 }
             })
         }
+    },
+    getIdByToken(req){
+        const token = req.headers['authorization']
+        return jwt.verify(token,config.secret,(err, decoded) =>{
+            if(err){
+                return false
+            } else {
+                return decoded.activeUser.ID
+            }
+        })
     }
 }
 

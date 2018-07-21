@@ -1,7 +1,7 @@
-const grade = require('../service/grade-history/about-grade');
+const grade = require('../../service/grade-history/about-grade');
 
 
-async function addGrade(list) {
+addGrade = (list) => {
     return new Promise((resolve, reject) => {
 
         const res = {
@@ -18,7 +18,6 @@ async function addGrade(list) {
                 })
             } else {
                 res.error++;
-               
             }
         })
 
@@ -36,14 +35,13 @@ const gradeHistory = {
             // console.log(list)
             callback.status(200)
             callback.json(list);
-        }).catch((error)=>{
+        }).catch((error) => {
             callback.status(500)
             callback.json(error);
         });
 
 
     },
-
 }
 
 module.exports = gradeHistory;

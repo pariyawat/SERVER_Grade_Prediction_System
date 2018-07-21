@@ -12,6 +12,7 @@ const loginRouter = require('./routes/login/login_rout');
 const subjectRouter = require('./routes/subjects/subjects');
 const profileRouter = require('./routes/profile/profile');
 const addGradeStudentRouter = require('./routes/grade-history/add-grade-student');
+const getSubjectSingleRouter = require('./routes/predictions/single/single-prediction-router');
 
 const app = express();
 
@@ -32,15 +33,16 @@ app.use('/users', usersRouter);
 app.use('/api/login',loginRouter);
 
 // ตรวจ Token
-// app.use((req, res , next) =>{
-//   auth.verifyToken(req.header['authorization'], next);
-//   next();
-// })
+app.use((req, res , next) =>{
+  auth.verifyToken(req.headers['authorization'], next);
+  next();
+})
 
 
 app.use('/api/subject', subjectRouter);
 app.use('/api/profile', profileRouter);
 app.use('/api/add-grade-student',addGradeStudentRouter);
+app.use('/api/predic-single-subject',getSubjectSingleRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

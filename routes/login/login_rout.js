@@ -24,21 +24,21 @@ router.post('/', (req, res, next) => {
                             res.json(401, "Can not login");
                         } else {
                             let dataAdmin = adminRow[0];
-                            let token = auth.createToken(dataAdmin.ID);
+                            let token = auth.createToken(dataAdmin);
                             dataAdmin['Token'] = token;
                             res.json(dataAdmin);
                         }
                     });
                 } else {
                     let dataTeacher = teacherRow[0];
-                    let token = auth.createToken(dataTeacher.ID);
+                    let token = auth.createToken(dataTeacher);
                     dataTeacher['Token'] = token;
                     res.json(dataTeacher);
                 }
             });
         } else {
             let dataStuden = studentRow[0];
-            let token = auth.createToken(dataStuden.ID);
+            let token = auth.createToken(dataStuden);
             dataStuden['Token'] = token;
             res.json(dataStuden);
         }

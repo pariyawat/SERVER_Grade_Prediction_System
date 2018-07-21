@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const gradeModule = require('../../module/grad-history');
-
+const gradeModule = require('../../controller/grade-history/add-grade-student');
 
 router.post('/', async (req, res, next) => {
     const data = req.body
@@ -9,8 +8,5 @@ router.post('/', async (req, res, next) => {
     gradeModule.addGradeStudent(data , res);
 
 });
-
-
-
 
 module.exports = router;
