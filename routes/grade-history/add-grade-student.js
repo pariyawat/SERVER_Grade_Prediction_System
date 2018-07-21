@@ -1,37 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const grade = require('../../service/grade-history/about-grade');
+const gradeModule = require('../../module/grad-history');
 
-router.post('/', (req, res, next) => {
+
+router.post('/', async (req, res, next) => {
     const data = req.body
 
-    let resData = [];
-
-    for (let i = 0; i <= data.length; i++) {
-        const id = data[i].subject_id || null;
-        if (id !== null) {
-            grade.addGradeStudent(data[i], (err, row) => {
-                if (err) {
-                    resData.push(false)
-                } else {
-                    resData.push(true)
-                }
-
-
-
-
-
-            })
-        }
-
-        if (i + 1 === data.length) {
-            res.send(true);
-        }
-
-
-    }
-
+    gradeModule.addGradeStudent(data , res);
 
 });
+
+
+
 
 module.exports = router;
