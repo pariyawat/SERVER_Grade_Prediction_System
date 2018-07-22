@@ -6,4 +6,13 @@ const connection = mysql.createConnection({
     database: 'gpadb'
 });
 
+connection.connect(function(err) {
+    if (err) {
+      console.error('error connecting Database');
+      return;
+    }
+   
+    console.log('Connect Database Successfully');
+  });
+
 module.exports = connection
