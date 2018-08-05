@@ -1,27 +1,27 @@
 const grade = require('../../service/grade-history/about-grade');
+const chalk = require('chalk');
 
 
-const addGrade = async (list) => {
-
-    return await new Promise((resolve, reject) => {
+const addGrade = (list, userID) => {
+    return new Promise((resolve, reject) => {
 
         let res = {
             success: 0,
             error: 0,
+            errorItem:[],
             total: 0,
         };
 
         list.forEach(item => {
-            const id = item.subject_id || null;
-            if (id !== null) {
-                grade.addGrade(item)
+            const sibjectID = item.subject_id || null;
+            if (sibjectID !== null) {
+                grade.addGrade(item, userID)
                     .then(response => {
                         if (response.affectedRows == 1) {
                             res.success++;
-                            console.log('success---------->' + res.success)
                         } else if (response.affectedRows == 0) {
                             res.error++;
-                            console.log('err ------------->' + res.error)
+                            res.errorItem.push(sibjectID)
                         }
                     }).catch((error) => {
                         reject(error);
@@ -34,8 +34,8 @@ const addGrade = async (list) => {
         res.total = list.length;
 
         setTimeout(() => {
-            console.log(res)
             resolve(res)
+            // console.log(res)
         }, 500);
     })
 
@@ -44,8 +44,8 @@ const addGrade = async (list) => {
 
 const gradeHistory = {
 
-    addGradeStudent: (data, callback) => {
-        addGrade(data)
+    addGradeStudent: (data, userID, callback) => {
+        addGrade(data, userID)
             .then((list) => {
                 callback.status(200)
                 callback.json(list);
@@ -53,8 +53,8 @@ const gradeHistory = {
                 callback.status(500)
                 callback.json(error);
             });
-
     },
 }
+
 
 module.exports = gradeHistory;

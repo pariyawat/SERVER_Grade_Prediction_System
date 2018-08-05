@@ -2,15 +2,30 @@ const db = require('../../config/dbconnection');
 const aboutGrade = {
 
 
-    addGrade:  (data) => {
+    addGrade: (data, userID) => {
+        const studentID = userID.substring(0, 4);
+        let ID = '';
+        if (studentID >= 1158) {
+            ID = '58'
+        } else if (studentID >= 1153) {
+            ID = '53'
+        } else if (studentID >= 1150) {
+            ID = '50'
+        }
         return new Promise((resolve, reject) => {
+
+
+            const deleteGrade = `
+            DELETE FROM grade_history WHERE student_id = '${userID}' AND subject_id = '${data.subject_id}'; 
+            `
+            db.query(deleteGrade)
 
             const addGradeList = `
             INSERT INTO grade_history (student_id, subject_cpe, subject_id, subject_name, course_id, grade) 
-            SELECT '${data.student_id}',T1.subject_cpe, T1.subject_id, T1.subject_name, T1.course_id, '${data.grade}' 
-            FROM (SELECT subject_cpe, subject.subject_id58 AS subject_id, subject_name,course_id  FROM subject LEFT JOIN subject_58   
-            ON subject.subject_id58 = subject_58.subject_id58 
-            WHERE subject_58.subject_id58 ='${data.subject_id}') T1; 
+            SELECT '${userID}',T1.subject_cpe, T1.subject_id, T1.subject_name, T1.course_id, '${data.grade}' 
+            FROM (SELECT subject_cpe, subject.subject_id${ID} AS subject_id, subject_name,course_id  FROM subject LEFT JOIN subject_${ID}   
+            ON subject.subject_id${ID} = subject_${ID}.subject_id${ID} 
+            WHERE subject_${ID}.subject_id${ID} ='${data.subject_id}') T1; 
             `
             db.query(addGradeList, (error, results) => {
                 if (error) {

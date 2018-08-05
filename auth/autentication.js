@@ -20,13 +20,13 @@ const auth = {
             })
         }
     },
-    getIdByToken(req){
+    getUserByToken(req){
         const token = req.headers['authorization']
         return jwt.verify(token,config.secret,(err, decoded) =>{
             if(err){
-                return false
+                return err
             } else {
-                return decoded.activeUser.ID
+                return decoded.activeUser
             }
         })
     }
