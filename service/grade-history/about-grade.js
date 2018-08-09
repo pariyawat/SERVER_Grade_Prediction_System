@@ -53,6 +53,20 @@ const aboutGrade = {
                 }
             });
         })
+    },
+
+    deleteGrade: (data) => {
+        return new Promise((resolve, reject) => {
+            const deleteGradeSQL = `DELETE FROM grade_history WHERE student_id = '${data.userID}' AND subject_id = '${data.subID}'`
+            
+            db.query(deleteGradeSQL, (error, results) => {
+                if (error) {
+                    reject(error)
+                } else {
+                    resolve(results)
+                }
+            })
+        })
     }
 }
 

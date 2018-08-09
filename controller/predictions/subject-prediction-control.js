@@ -1,4 +1,4 @@
-const predicService = require('../../service/predictions/subject-prediction-service');
+const predicService = require('../../service/predictions/single-prediction-service');
 const singlePredict = {
     getSubject: (req, res) => {
 
