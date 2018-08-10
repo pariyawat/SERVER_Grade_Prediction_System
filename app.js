@@ -43,9 +43,10 @@ app.use((req, res, next) => {
 
 app.use('/api/subject', subjectRouter);
 app.use('/api/profile', profileRouter);
+app.use('/api/grade-history/student/', gradeHistoryRouter.getGrade)
 app.use('/api/grade-history/student/add', gradeHistoryRouter.addGrade);
 app.use('/api/grade-history/student/delete', gradeHistoryRouter.deleteGrade);
-app.use('/api/grade-history/student/', gradeHistoryRouter.getGrade)
+app.use('/api/grade-history/student/edit', gradeHistoryRouter.editGrade);
 app.use('/api/subject-prediction', predictionRouter.getGrade)
 app.use('/api/student-prediction', predictionRouter.prediction)
 

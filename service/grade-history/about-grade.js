@@ -67,6 +67,20 @@ const aboutGrade = {
                 }
             })
         })
+    },
+
+    editGrade: (data) => {
+        return new Promise((resolve, reject) => {
+            const editGradeSQL = `UPDATE grade_history SET grade = '${data.GRADE}' WHERE student_id = '${data.userID}' AND subject_id = '${data.SUB_ID}'`
+
+            db.query(editGradeSQL, (error, results) => {
+                if (error) {
+                    reject(error)
+                } else {
+                    resolve(results)
+                }
+            })
+        })
     }
 }
 
