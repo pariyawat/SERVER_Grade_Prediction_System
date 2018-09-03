@@ -4,13 +4,13 @@ const aboutGrade = {
 
     addGrade: (data, userID) => {
         const studentID = userID.substring(0, 4);
-        let ID = '';
+        let course = '';
         if (studentID >= 1158) {
-            ID = '58'
+            course = '58'
         } else if (studentID >= 1153) {
-            ID = '53'
+            course = '53'
         } else if (studentID >= 1150) {
-            ID = '50'
+            course = '50'
         }
         return new Promise((resolve, reject) => {
 
@@ -23,9 +23,9 @@ const aboutGrade = {
             const addGradeList = `
             INSERT INTO grade_history (student_id, subject_cpe, subject_id, subject_name, course_id, grade) 
             SELECT '${userID}',T1.subject_cpe, T1.subject_id, T1.subject_name, T1.course_id, '${data.grade}' 
-            FROM (SELECT subject_cpe, subject.subject_id${ID} AS subject_id, subject_name,course_id  FROM subject LEFT JOIN subject_${ID}   
-            ON subject.subject_id${ID} = subject_${ID}.subject_id${ID} 
-            WHERE subject_${ID}.subject_id${ID} ='${data.subject_id}') T1; 
+            FROM (SELECT subject_cpe, subject.subject_id${course} AS subject_id, subject_name,course_id  FROM subject LEFT JOIN subject_${course}   
+            ON subject.subject_id${course} = subject_${course}.subject_id${course} 
+            WHERE subject_${course}.subject_id${course} ='${data.subject_id}') T1; 
             `
             db.query(addGradeList, (error, results) => {
                 if (error) {
@@ -58,7 +58,7 @@ const aboutGrade = {
     deleteGrade: (data) => {
         return new Promise((resolve, reject) => {
             const deleteGradeSQL = `DELETE FROM grade_history WHERE student_id = '${data.userID}' AND subject_id = '${data.subID}'`
-            
+
             db.query(deleteGradeSQL, (error, results) => {
                 if (error) {
                     reject(error)
@@ -85,3 +85,4 @@ const aboutGrade = {
 }
 
 module.exports = aboutGrade;
+

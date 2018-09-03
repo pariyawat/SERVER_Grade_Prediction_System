@@ -1,8 +1,8 @@
 const predicService = require('../../service/predictions/single-prediction-service');
 const singlePredict = {
-    getSubject: (req, res) => {
+    getSubject: (userID, res) => {
 
-        predicService.getSubject()
+        predicService.getSubject(userID)
             .then((data) => {
                 res.json(data);
             }).catch((err) => {

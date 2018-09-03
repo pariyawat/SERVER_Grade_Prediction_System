@@ -11,4 +11,4 @@ const GradeControl = {
             });
     }
 }
-module.exports = GradeControl;
+module.exports = GradeControl; 

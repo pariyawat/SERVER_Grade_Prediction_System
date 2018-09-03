@@ -18,7 +18,7 @@ const Profile = {
     let SQLAdmin;
     SQLAdmin = "SELECT admin_id AS AdminID, concat(first_name,' ',last_name) as Name, email_address ";
     SQLAdmin += "AS Email, role AS Role FROM admin WHERE admin_id =" + "'" + id + "'";
-    
+
     if (role === "Student") {
       return db.query(SQLStudent, callback);
     } else if (role === "Teacher") {
@@ -28,6 +28,15 @@ const Profile = {
     } else {
       return callback(new createError(404));
     }
+  },
+
+  changeEmail: (data, callback) => {
+    let emailSQL = `
+    UPDATE student
+    SET email_address = '${data.email}'
+    WHERE student_id = '${data.ID}'
+    `
+    return db.query(emailSQL, callback)
   }
 };
 

@@ -32,7 +32,7 @@ const addGrade = (list, userID) => {
         });
 
         res.total = list.length;
-
+        console.log(res)
         setTimeout(() => {
             resolve(res)
             // console.log(res)
