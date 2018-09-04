@@ -5,7 +5,7 @@ const prediction = {
         // obj = JSON.parse(data);
 
 
-        console.log('>>>>>>'+JSON.stringify(data))
+        console.log('>>>>>>'+JSON.stringify(data)) 
         
         
         R.call(__dirname+'./Rscript/predict.R', {data})

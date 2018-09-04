@@ -37,6 +37,15 @@ const Profile = {
     WHERE student_id = '${data.ID}'
     `
     return db.query(emailSQL, callback)
+  },
+
+  changePassword:(data, callback) => {
+    let emailSQL = `
+    UPDATE student
+    SET pass_word = '${data.password}'
+    WHERE student_id = '${data.ID}'
+    `
+    return db.query(emailSQL, callback)
   }
 };
 

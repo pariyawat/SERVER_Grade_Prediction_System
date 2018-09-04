@@ -44,6 +44,7 @@ app.use((req, res, next) => {
 app.use('/api/subject', subjectRouter);
 app.use('/api/profile', profileRouter.getProfile);
 app.use('/api/profile/change-email', profileRouter.changeEmail);
+app.use('/api/profile/change-password', profileRouter.changePass);
 app.use('/api/grade-history/student/', gradeHistoryRouter.getGrade);
 app.use('/api/grade-history/student/add', gradeHistoryRouter.addGrade);
 app.use('/api/grade-history/student/delete', gradeHistoryRouter.deleteGrade);

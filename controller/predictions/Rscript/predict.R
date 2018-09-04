@@ -128,7 +128,7 @@ Pidiction = function(ID,SUB_CPE,SUB_NAME){
   acc_value <- format(round(sum(acc)/5*100, 2), nsmall = 2)
   
   result <- paste("Accuracy",acc_value,"%")
-  # print(paste(result,value))
+  print(paste(result,value))
   
  ret <- list(STD_ID = ID, SUB_NAME = SUB_NAME, DT  = list(Grade = student.pred[[1]], Accuracy = acc_value),ASSO = list(Grade = student.pred[[1]], Confidence = "50", Lift = '1'))
   return (ret)
