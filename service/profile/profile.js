@@ -31,7 +31,7 @@ const Profile = {
   },
 
   changeEmail: (data, callback) => {
-    let emailSQL = `
+    let emailSQL = ` 
     UPDATE student
     SET email_address = '${data.email}'
     WHERE student_id = '${data.ID}'

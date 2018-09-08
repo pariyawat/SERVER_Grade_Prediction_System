@@ -12,7 +12,7 @@ dataToJson <- json[[1]]
 
 Pidiction = function(ID,SUB_CPE,SUB_NAME){
   library(DBI)
-  library(RMySQL)
+  library(RMySQL) 
   library(rpart)
   library(Matrix)
   library(arules)
@@ -49,29 +49,29 @@ Pidiction = function(ID,SUB_CPE,SUB_NAME){
   
   # สร้างกฏความสัมพันธ์ & ทำนายผลด้วยกฏ ###############################################
   
-  transaction_data = data.frame(sapply(data.train,as.factor))
-  t2 <- as(transaction_data,"transactions")
-  subject.foctor <- c(paste0(SUB_CPE,"=F"),
-                      paste0(SUB_CPE,"=D"),
-                      paste0(SUB_CPE,"=D+"),
-                      paste0(SUB_CPE,"=C"),
-                      paste0(SUB_CPE,"=C+"),
-                      paste0(SUB_CPE,"=B"),
-                      paste0(SUB_CPE,"=B+"),
-                      paste0(SUB_CPE,"=A"))
+  # transaction_data = data.frame(sapply(data.train,as.factor))
+  # t2 <- as(transaction_data,"transactions")
+  # subject.foctor <- c(paste0(SUB_CPE,"=F"),
+  #                     paste0(SUB_CPE,"=D"),
+  #                     paste0(SUB_CPE,"=D+"),
+  #                     paste0(SUB_CPE,"=C"),
+  #                     paste0(SUB_CPE,"=C+"),
+  #                     paste0(SUB_CPE,"=B"),
+  #                     paste0(SUB_CPE,"=B+"),
+  #                     paste0(SUB_CPE,"=A"))
   
-  rules.all <- apriori(t2,
-                       control = list(verbose=F),
-                       parameter = list(minlen=2, supp=0.003, conf=0.5,target = "rules"),
-                       appearance = list(rhs=subject.foctor,default="lhs"))
-  inspect(rules.all)
-  V <- c(paste0(data.student$subject,"=",data.student$grade))
+  # rules.all <- apriori(t2,
+  #                      control = list(verbose=F),
+  #                      parameter = list(minlen=2, supp=0.003, conf=0.5,target = "rules"),
+  #                      appearance = list(rhs=subject.foctor,default="lhs"))
+  # inspect(rules.all)
+  # V <- c(paste0(data.student$subject,"=",data.student$grade))
   
-  rules.all <- sort(rules.all, by="lift")
-  subsetRules <- which(colSums(is.subset(rules.all, rules.all)) > 1) 
-  length(subsetRules)  #> 3913
-  rules <- rules.all[-subsetRules] # remove subset rules.
-  B <- inspect(rules)
+  # rules.all <- sort(rules.all, by="lift")
+  # subsetRules <- which(colSums(is.subset(rules.all, rules.all)) > 1) 
+  # length(subsetRules)  #> 3913
+  # rules <- rules.all[-subsetRules] # remove subset rules.
+  # B <- inspect(rules)
   
   
   # ทดสอบโมเดลต้นไม้ ############################################################
@@ -127,9 +127,7 @@ Pidiction = function(ID,SUB_CPE,SUB_NAME){
   
   acc_value <- format(round(sum(acc)/5*100, 2), nsmall = 2)
   
-  result <- paste("Accuracy",acc_value,"%")
-  print(paste(result,value))
-  
+
  ret <- list(STD_ID = ID, SUB_NAME = SUB_NAME, DT  = list(Grade = student.pred[[1]], Accuracy = acc_value),ASSO = list(Grade = student.pred[[1]], Confidence = "50", Lift = '1'))
   return (ret)
   #######################################################################
