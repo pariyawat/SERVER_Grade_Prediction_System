@@ -18,34 +18,64 @@ const getProfile = router.get('/:id/:role', (req, res) => {
 
 const changeEmail = router.put('/', (req, res) => {
     let email = req.body.email;
-    let ID = auth.getUserByToken(req).ID
-    Profile.changeEmail({
-        email: email,
-        ID: ID
-    }, (err, row) => {
-        if (err) {
-            res.json(err);
-        } else {
-            res.json(row)
-        }
-    })
+    let user = auth.getUserByToken(req)
+
+    if (user.Role === 'Teacher') {
+        Profile.changeEmailTeacher({
+            email: email,
+            ID: user.ID
+        }, (err, row) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(row)
+            }
+        })
+    } else {
+
+        Profile.changeEmail({
+            email: email,
+            ID: user.ID
+        }, (err, row) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(row)
+            }
+        })
+    }
+
 
 
 })
 
 const changePass = router.post('/', (req, res) => {
     let password = req.body.password;
-    let ID = auth.getUserByToken(req).ID;
-    Profile.changePassword({
-        password: password,
-        ID: ID
-    }, (err, row) => {
-        if (err) {
-            res.json(err);
-        } else {
-            res.json(row)
-        }
-    })
+    let user = auth.getUserByToken(req);
+
+    if (user.Role === 'Teacher') {
+        Profile.changePasswordTeacher({
+            password: password,
+            ID: user.ID
+        }, (err, row) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(row)
+            }
+        })
+    } else {
+        Profile.changePassword({
+            password: password,
+            ID: user.ID
+        }, (err, row) => {
+            if (err) {
+                res.json(err);
+            } else {
+                res.json(row)
+            }
+        })
+    }
 })
 
 

@@ -39,14 +39,32 @@ const Profile = {
     return db.query(emailSQL, callback)
   },
 
-  changePassword:(data, callback) => {
+  changePassword: (data, callback) => {
     let emailSQL = `
     UPDATE student
     SET pass_word = '${data.password}'
     WHERE student_id = '${data.ID}'
     `
     return db.query(emailSQL, callback)
-  }
+  },
+
+  changeEmailTeacher: (data, callback) => {
+    let emailSQL = ` 
+    UPDATE teacher
+    SET email_address = '${data.email}'
+    WHERE teacher_id = '${data.ID}'
+    `
+    return db.query(emailSQL, callback)
+  },
+
+  changePasswordTeacher: (data, callback) => {
+    let emailSQL = `
+    UPDATE teacher
+    SET pass_word = '${data.password}'
+    WHERE teacher_id = '${data.ID}'
+    `
+    return db.query(emailSQL, callback)
+  },
 };
 
 module.exports = Profile;

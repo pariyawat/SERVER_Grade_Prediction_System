@@ -11,6 +11,8 @@ const Subject = {
             course = '53'
         } else if (studentID >= 1150) {
             course = '50'
+        } else {
+            course = '50'
         }
         return new Promise((resolve, reject) => {
 

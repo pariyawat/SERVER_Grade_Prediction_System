@@ -5,7 +5,7 @@ const subject = require('../../controller/predictions/subject-prediction-control
 const singlePredict = require('../../controller/predictions/single-prediction-control');
 
 
-const getGrade = router.get('/', (req, res, next) => {
+const getSubject = router.get('/', (req, res, next) => {
     let user = auth.getUserByToken(req)
     subject.getSubject(user.ID, res);
 })
@@ -20,6 +20,6 @@ const prediction = router.post('/', (req, res, next) => {
 })
 
 module.exports = {
-    getGrade,
+    getSubject,
     prediction
 };

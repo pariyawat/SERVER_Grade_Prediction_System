@@ -12,7 +12,8 @@ const loginRouter = require('./routes/login/login_rout');
 const subjectRouter = require('./routes/subjects/subjects');
 const profileRouter = require('./routes/profile/profile');
 const gradeHistoryRouter = require('./routes/grade-history/grade-history-router');
-const predictionRouter = require('./routes/predictions/single-prediction-router');
+const singlePredictRouter = require('./routes/predictions/single-prediction-router');
+const groupPredictRouter = require('./routes/predictions/group-prediction-router');
 
 const app = express();
 
@@ -49,8 +50,12 @@ app.use('/api/grade-history/student/', gradeHistoryRouter.getGrade);
 app.use('/api/grade-history/student/add', gradeHistoryRouter.addGrade);
 app.use('/api/grade-history/student/delete', gradeHistoryRouter.deleteGrade);
 app.use('/api/grade-history/student/edit', gradeHistoryRouter.editGrade);
-app.use('/api/subject-prediction', predictionRouter.getGrade);
-app.use('/api/student-prediction', predictionRouter.prediction);
+app.use('/api/prediction/single/get-subject', singlePredictRouter.getSubject);
+app.use('/api/prediction/single/std-predict', singlePredictRouter.prediction);
+app.use('/api/prediction/group/get-group', groupPredictRouter.getGroup);
+app.use('/api/prediction/group/get-student', groupPredictRouter.getStudent);
+app.use('/api/prediction/group/get-subject', groupPredictRouter.getSubject);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
