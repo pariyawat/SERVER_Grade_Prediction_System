@@ -10,8 +10,8 @@ const prediction = {
         
         R.call(__dirname+'./Rscript/predict.R', {data})
         .then((result) => {
-            console.log(result.result);
-            res.json(result.result); 
+            console.log(result);
+            res.json(result); 
             
         })
         .catch(err => {
