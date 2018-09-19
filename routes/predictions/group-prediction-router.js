@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../../auth/autentication')
 const predictService = require('../../service/predictions/group-prediction-service')
+const predictionControl = require('../../controller/predictions/group-prediction-control')
 
 
 const getGroup = router.get('/', (req, res) => {
@@ -41,6 +42,12 @@ const getSubject = router.get('/t/:group', (req, res) => {
     })
 })
 
+const prediction = router.post('/', (req, res) => {
+    let data = req.body;
+    predictionControl.predict(data,res)
+
+})
+
 
 
 
@@ -50,5 +57,6 @@ const getSubject = router.get('/t/:group', (req, res) => {
 module.exports = {
     getGroup,
     getStudent,
-    getSubject
+    getSubject,
+    prediction
 };

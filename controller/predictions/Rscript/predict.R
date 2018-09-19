@@ -1,5 +1,6 @@
 #json library
 library(rjson)
+library(RMySQL)
 
 # get arguments of cli
 args <- commandArgs(trailingOnly = TRUE)
@@ -20,7 +21,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
   library(plyr)
   library(dplyr)
   
-  # ดึงข้อมูลจากฐานข้อมูล #####################################################
+  # เน€เธ�โ€�เน€เธ�เธ–เน€เธ�ย�เน€เธ�ย�เน€เธ�ย�เน€เธ�เธ�เน€เธ�เธ�เน€เธ�เธ�เน€เธ�เธ…เน€เธ�ย�เน€เธ�เธ’เน€เธ�ย�เน€เธ�ย�เน€เธ�เธ’เน€เธ�ย�เน€เธ�ย�เน€เธ�ย�เน€เธ�เธ�เน€เธ�เธ�เน€เธ�เธ�เน€เธ�เธ… #####################################################
   
   mydb = dbConnect(
     MySQL(),
@@ -32,6 +33,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
   dbListTables(mydb)
   hs <- dbGetQuery(mydb, "set character set utf8")
   gs <- dbGetQuery(mydb, "set character set utf8")
+  ms <- dbGetQuery(mydb, "set character set utf8")
   
   stu_grade <-
     c("SELECT subject_cpe,grade FROM grade_history where student_ID ='",
@@ -57,20 +59,29 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
   gs = dbSendQuery(mydb, paste(stu_learns, collapse = ""))
   data.train = fetch(gs, n = -1)
   
+  stu_grade.mean <-
+    c("SELECT credit FROM subject where subject_cpe = '",
+      SUB_CPE,
+      "'")
+  hs = dbSendQuery(mydb, paste(stu_grade.mean, collapse = ""))
+  means = fetch(hs, n = -1)
+  
   dbDisconnect(mydb)
   
-  if (nrow(data.train) < 100) { #ตรวจสอบค่า
+  if (nrow(data.train) < 100) {
+    #เน€เธ�โ€ขเน€เธ�เธ�เน€เธ�เธ�เน€เธ�ย�เน€เธ�เธ�เน€เธ�เธ�เน€เธ�ย�เน€เธ�ย�เน€เธ�ย�เน€เธ�เธ’
     
     ret <-
       list(
         STD_ID = STD_ID,
         SUB_NAME = SUB_NAME,
-        DT  = list(Grade = "?", Accuracy = "?"),
-        ASSO = list(Grade = "?", Confidence = "?")
+        CREDIT = means$credit,
+        DT  = list(Grade = '?', Accuracy = 0),
+        ASSO = list(Grade = '?', Confidence = 0)
       )
     
   } else {
-    # ทดสอบโมเดลต้นไม้ ########################################################
+    # เน€เธ�โ€”เน€เธ�โ€�เน€เธ�เธ�เน€เธ�เธ�เน€เธ�ย�เน€เธ�ย�เน€เธ�เธ�เน€เธ�โ�ฌเน€เธ�โ€�เน€เธ�เธ…เน€เธ�โ€ขเน€เธ�ย�เน€เธ�ย�เน€เธ�ย�เน€เธ�เธ�เน€เธ�ย� ########################################################
     formula.tree <-
       as.formula(paste(SUB_CPE, "~", paste(
         setdiff(data.student$subject_cpe, SUB_CPE), collapse = "+"
@@ -79,7 +90,8 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
     set.seed(123)
     folds <- split(data.train, cut(sample(1:nrow(data.train)), 10))
     acc <- rep(NA, length(folds))
-    Grade.add <- c("A", "B+", "B", "C+", "C", "D+", "D", "F", "S","U")
+    Grade.add <-
+      c("A", "B+", "B", "C+", "C", "D+", "D", "F", "S", "U")
     
     for (u in 1:length(folds)) {
       test <- ldply(folds[u], data.frame)
@@ -90,19 +102,21 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
       }
       
       tmp.model <- rpart(formula.tree , train, method = "class")
-      tmp.predict <- predict(tmp.model, newdata = test, type = "class")
+      tmp.predict <-
+        predict(tmp.model, newdata = test, type = "class")
       
       conf.mat <- table(test[[SUB_CPE]], tmp.predict)
       
       dig <- c()
-        for(counts in 1:length(row.names(conf.mat))) {
-          dig[counts] <- conf.mat[row.names(conf.mat)[counts],row.names(conf.mat)[counts]]
-        }
+      for (counts in 1:length(row.names(conf.mat))) {
+        dig[counts] <-
+          conf.mat[row.names(conf.mat)[counts], row.names(conf.mat)[counts]]
+      }
       
       
-      acc[u] <- 100*sum(dig) / sum(conf.mat)
+      acc[u] <- 100 * sum(dig) / sum(conf.mat)
     }
-   
+    
     select.model <- which(acc == max(acc))
     data.train.DT <- ldply(folds[-select.model[1]], data.frame)
     for (e in 1:10) {
@@ -117,7 +131,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
                         data.student$subject_cpe)
       ))
     
-    # สร้างโมเดลต้นไม้ & ทำนายผลด้วยโมเดลต้นไม้ ##############################
+    # เน€เธ�เธ�เน€เธ�เธ�เน€เธ�ย�เน€เธ�เธ’เน€เธ�ย�เน€เธ�ย�เน€เธ�เธ�เน€เธ�โ�ฌเน€เธ�โ€�เน€เธ�เธ…เน€เธ�โ€ขเน€เธ�ย�เน€เธ�ย�เน€เธ�ย�เน€เธ�เธ�เน€เธ�ย� & เน€เธ�โ€”เน€เธ�เธ“เน€เธ�ย�เน€เธ�เธ’เน€เธ�เธ�เน€เธ�ย�เน€เธ�เธ…เน€เธ�โ€�เน€เธ�ย�เน€เธ�เธ�เน€เธ�เธ�เน€เธ�ย�เน€เธ�เธ�เน€เธ�โ�ฌเน€เธ�โ€�เน€เธ�เธ…เน€เธ�โ€ขเน€เธ�ย�เน€เธ�ย�เน€เธ�ย�เน€เธ�เธ�เน€เธ�ย� ##############################
     
     student.dtModel <-
       rpart(formula.tree, data.train.DT, method = "class")
@@ -125,7 +139,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
     student.pred.DT <-
       predict(student.dtModel, data.test, type = "class")
     
-    # สร้างกฏความสัมพันธ์ & ทำนายผลด้วยกฏ ########################################
+    # เน€เธ�เธ�เน€เธ�เธ�เน€เธ�ย�เน€เธ�เธ’เน€เธ�ย�เน€เธ�ย�เน€เธ�ย�เน€เธ�ย�เน€เธ�เธ�เน€เธ�เธ’เน€เธ�เธ�เน€เธ�เธ�เน€เธ�เธ‘เน€เธ�เธ�เน€เธ�ย�เน€เธ�เธ‘เน€เธ�ย�เน€เธ�ย�เน€เธ�ย� & เน€เธ�โ€”เน€เธ�เธ“เน€เธ�ย�เน€เธ�เธ’เน€เธ�เธ�เน€เธ�ย�เน€เธ�เธ…เน€เธ�โ€�เน€เธ�ย�เน€เธ�เธ�เน€เธ�เธ�เน€เธ�ย�เน€เธ�ย� ########################################
     
     
     dis <- distinct(select(data.train, SUB_CPE))
@@ -142,22 +156,22 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
       control = list(verbose = F),
       parameter = list(
         minlen = 2,
-        supp = 0.01,
-        conf = 0.5 ,
+        supp = 0.1,
+        conf = 0.6 ,
         target = "rules"
       ),
       appearance = list(rhs = subject.foctor, default = "lhs")
     )
     
-    if(length(rules.all) == 0){
-      rules <- rules.all 
+    if (length(rules.all) == 0) {
+      rules <- rules.all
     } else {
-    
-    rules.all <- sort(rules.all, by = "confidence")
-    subsetRules <- which(colSums(is.subset(rules.all, rules.all)) > 1)
-    #length(subsetRules)  #> 3913
-    rules <- rules.all[-subsetRules] # remove subset rules.
-    
+      rules.all <- sort(rules.all, by = "confidence")
+      subsetRules <-
+        which(colSums(is.subset(rules.all, rules.all)) > 1)
+      #length(subsetRules)  #> 3913
+      rules <- rules.all[-subsetRules] # remove subset rules.
+      
     }
     ###############################################################################
     
@@ -168,8 +182,8 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
     result <- data.frame(inspect(rules[as.logical(suitableRules)]))
     
     if (nrow(result) == 0) {
-      result.grade <- ("No rules")
-      result.confiden <- ("No rules")
+      result.grade <- "?"
+      result.confiden <- 0
     } else {
       result.grades <-
         c(substr(result$rhs[1], 9, 9), substr(result$rhs[1], 10, 10))
@@ -179,29 +193,78 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
       } else {
         result.grade <- paste0(result.grades[1], result.grades[2])
       }
-      result.confiden <- round(result$confidence[1], 2)*100
+      result.confiden <- round(result$confidence[1], 2) * 100
     }
     ##############################################################################3
     ret <-
       list(
         STD_ID = STD_ID,
         SUB_NAME = SUB_NAME,
-        DT  = list(Grade = student.pred.DT[[1]], Accuracy = round(max(acc), 2)),
+        CREDIT = means$credit, 
+        DT  = list(
+          Grade = as.character(student.pred.DT[[1]]),
+          Accuracy = round(max(acc), 2)
+        ),
         ASSO = list(Grade = result.grade, Confidence = result.confiden)
       )
-    
-    
   }
 }
 
 results <- list()
 
 for (x in 1:length(jsons)) {
-  results[x] <- list(Pidiction(jsons[[x]]$STD_ID, jsons[[x]]$SUB_CPE, jsons[[x]]$SUB_NAME))
+  results[x] <-
+    list(Pidiction(jsons[[x]]$STD_ID, jsons[[x]]$SUB_CPE, jsons[[x]]$SUB_NAME))
+}
+
+
+mean.g <- c()
+creditx <- c()
+meanx <- c()
+
+for (i in 4:5) {
+  for (m in 1:length(results)) {
+    if (results[[c(m, i)]]$Grade == "D") {
+      mean.g[m] <- 1 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "D+") {
+      mean.g[m] <- 1.5 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "C") {
+      mean.g[m] <- 2 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "C+") {
+      mean.g[m] <- 2.5 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "B") {
+      mean.g[m] <- 3 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "B+") {
+      mean.g[m] <- 3.5 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "A") {
+      mean.g[m] <- 4 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "S") {
+      mean.g[m] <- 1 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "?") {
+      mean.g[m] <- 0 * results[[m]]$CREDIT
+      creditx[m] <-  0
+    } else {
+      mean.g[m] <- 0 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    }
+  }
+  if (sum(mean.g) == 0) {
+    meanx <- append(meanx,0)
+  } else {
+    meanx <- append(meanx,round(sum(mean.g) / sum(creditx),2))
+  }
 }
 
 #convert return of function to list
-output <- list(result = results, GPA = '2.25')
+output <- list(result = results, gpaDT = meanx[1], gpaASSO = meanx[2])
 
 # output JSON
-print(toJSON(output));
+print(toJSON(output))
