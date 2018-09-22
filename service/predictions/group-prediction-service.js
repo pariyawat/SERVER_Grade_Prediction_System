@@ -33,7 +33,14 @@ const groupPredictService = {
         const getSubSQL = `SELECT subject_cpe AS SUB_CPE, subject.subject_id${course} AS SUB_ID, subject_name AS SUB_NAME
         FROM subject  JOIN subject_${course} ON subject.subject_id${course}  = subject_${course}.subject_id${course}`
 
-        return db.query(getSubSQL,callback)
+        return db.query(getSubSQL, callback)
+    },
+
+    getStdName: (id, callback) => {
+        let nSQL = ` SELECT CONCAT(first_name,' ', last_name) AS STD_NAME, student_id AS STD_ID FROM student 
+        WHERE student_id ='${id}' `
+        return db.query(nSQL, callback)
+
     }
 }
 

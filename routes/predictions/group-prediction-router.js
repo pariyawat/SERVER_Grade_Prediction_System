@@ -4,7 +4,6 @@ const auth = require('../../auth/autentication')
 const predictService = require('../../service/predictions/group-prediction-service')
 const predictionControl = require('../../controller/predictions/group-prediction-control')
 
-
 const getGroup = router.get('/', (req, res) => {
 
     let user = auth.getUserByToken(req)
@@ -44,13 +43,9 @@ const getSubject = router.get('/t/:group', (req, res) => {
 
 const prediction = router.post('/', (req, res) => {
     let data = req.body;
-    predictionControl.predict(data,res)
+    predictionControl.predict(data, res)
 
 })
-
-
-
-
 
 
 

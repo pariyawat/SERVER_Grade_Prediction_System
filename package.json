@@ -24,6 +24,9 @@
     "r-script": "0.0.3"
   },
   "devDependencies": {
+    "eslint": "^5.6.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
     "mocha": "^5.1.1",
     "supertest": "^3.0.0"
   }
