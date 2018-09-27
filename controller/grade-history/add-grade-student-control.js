@@ -1,5 +1,6 @@
 const grade = require('../../service/grade-history/about-grade');
 const chalk = require('chalk');
+import * as Rx from "rxjs";
 
 
  addGrade = (list, userID) => {
@@ -11,7 +12,8 @@ const chalk = require('chalk');
     };
     return new Promise((resolve, reject) => {
 
-
+        // ตัวแปล Subject
+        const subject = new Rx.Subject();
 
         list.forEach(item => {
             const sibjectID = item.subject_id || null;
@@ -20,6 +22,8 @@ const chalk = require('chalk');
                     .then(response => {
                         if (response.affectedRows == 1) {
                             res.success++;
+                            // ส่งข้อมูลให้ตัวแปล และส่งข้อมูลเข้าไป
+                            subject.next(res);
                         } else if (response.affectedRows == 0) {
                             res.error++;
                             res.errorItem.push(sibjectID)
@@ -32,11 +36,14 @@ const chalk = require('chalk');
             }
         });
 
-        res.total = list.length;
-        console.log(res)
-        setTimeout(() => {
+        // รอฟังตัวแปลมีการเปลี่ยนแปลง
+        subject.subscribe((res) => {
+            res.total = list.length;
             resolve(res)
-        }, 500);
+        });
+
+        
+       
     })
 
 
