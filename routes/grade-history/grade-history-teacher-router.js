@@ -54,6 +54,7 @@ const teacherAddrade = router.post('/', async (req, res, next) => {
 
         }
     }
+    // res.json(output)
     setTimeout(() => {
         res.json(output)
     }, 500);

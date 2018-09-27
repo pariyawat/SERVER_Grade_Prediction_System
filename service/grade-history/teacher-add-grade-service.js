@@ -23,7 +23,7 @@ const teachAddGrade = {
         WHERE subject_${course}.subject_id${course} ='${data.subject_id}') T1, student T2 WHERE student_id = '${data.student_id}' AND group_name = '${group}';
         `
         db.query(deleteGrade)
-        db.query(addGradeList, callback)
+       return db.query(addGradeList, callback)
     }
 }
 

@@ -157,7 +157,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
       control = list(verbose = F),
       parameter = list(
         minlen = 2,
-        supp = 0.01,
+        supp = 0.1,
         conf = 0.5 ,
         target = "rules"
       ),
