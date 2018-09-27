@@ -28,7 +28,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
     host = 'localhost'
   )
   dbListTables(mydb)
-  hs <- dbGetQuery(mydb, "set character set utf8")
+  rs <- dbGetQuery(mydb, "set character set utf8")
   gs <- dbGetQuery(mydb, "set character set utf8")
   ms <- dbGetQuery(mydb, "set character set utf8")
   
@@ -36,8 +36,8 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
     c("SELECT subject_cpe,grade FROM grade_history where student_ID ='",
       STD_ID,
       "'")
-  hs = dbSendQuery(mydb, paste(stu_grade, collapse = ""))
-  data.student = fetch(hs, n = -1)
+  rs = dbSendQuery(mydb, paste(stu_grade, collapse = ""))
+  data.student = fetch(rs, n = -1)
   
   Query.suject <-
     paste(c(paste(unique(paste(
@@ -52,8 +52,8 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
       SUB_CPE ,
       "IS NOT NULL"
     ))
-  gs = dbSendQuery(mydb, paste(stu_learns, collapse = ""))
-  data.train = fetch(gs, n = -1)
+  rs = dbSendQuery(mydb, paste(stu_learns, collapse = ""))
+  data.train = fetch(rs, n = -1)
   data.train <-
     data.train[colSums(is.na(data.train)) < nrow(data.train) * 0.9]
   
@@ -61,8 +61,15 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
     c("SELECT credit FROM subject where subject_cpe = '",
       SUB_CPE,
       "'")
-  hs = dbSendQuery(mydb, paste(stu_grade.mean, collapse = ""))
-  means = fetch(hs, n = -1)
+  rs = dbSendQuery(mydb, paste(stu_grade.mean, collapse = ""))
+  means = fetch(rs, n = -1)
+  
+  stu_name <-
+    c("SELECT CONCAT(first_name,'  ',last_name) as name FROM student where student_id = '",
+      STD_ID,
+      "'")
+  rs = dbSendQuery(mydb, paste(stu_name, collapse = ""))
+  name = fetch(rs, n = -1)
   
   dbDisconnect(mydb)
   
@@ -71,6 +78,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
     ret <-
       list(
         STD_ID = STD_ID,
+        STD_NAME = name$name,
         SUB_NAME = SUB_NAME,
         CREDIT = means$credit,
         DT  = list(Grade = '?', Accuracy = 0),
@@ -189,6 +197,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
     ret <-
       list(
         STD_ID = STD_ID,
+        STD_NAME = name$name,
         SUB_NAME = SUB_NAME,
         CREDIT = means$credit,
         DT  = list(
@@ -234,7 +243,7 @@ while (cnt.s < length(jsons) + 1) {
   creditx <- c()
   meanx <- c()
   
-  for (i in 4:5) {
+  for (i in 5:6) {
     for (m in 1:length(results)) {
       if (results[[c(m, i)]]$Grade == "D") {
         mean.g[m] <- 1 * results[[m]]$CREDIT
@@ -287,7 +296,7 @@ while (cnt.s < length(jsons) + 1) {
   meanx <- c()
   mean.g <- c()
   creditx <- c()
-  c = c + c
+  c = c + 1
 }
 
 Sub.cpe <- list()
@@ -296,7 +305,7 @@ for (n in 1:length(results)) {
   gradeSUM <- list()
   s <- 1
   
-  for (b in 4:5) {
+  for (b in 5:6) {
     count.grade <- c(0, 0, 0, 0, 0, 0, 0, 0, 0)
     for (v in 1:length(resultqr)) {
       if (resultqr[[v]]$results[[c(n, b)]]$Grade == "F") {
@@ -316,7 +325,7 @@ for (n in 1:length(results)) {
       } else if (resultqr[[v]]$results[[c(n, b)]]$Grade == "A") {
         count.grade[8] <- count.grade[8] + 1
       } else {
-        count.grade[8] <- count.grade[9] + 1
+        count.grade[9] <- count.grade[9] + 1
       }
     }
     gradeSUM[s] <- list(count.grade)

@@ -2,6 +2,8 @@ const mysql = require('mysql');
 const chalk = require('chalk');
 const connection = mysql.createConnection({
   host: 'localhost',
+  // host: '0.tcp.ap.ngrok.io',
+  // port: '10351',
   user: 'root',
   password: '',
   database: 'gpadb'

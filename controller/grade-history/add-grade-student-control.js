@@ -2,15 +2,16 @@ const grade = require('../../service/grade-history/about-grade');
 const chalk = require('chalk');
 
 
-const addGrade = (list, userID) => {
+ addGrade = (list, userID) => {
+    let res = {
+        success: 0,
+        error: 0,
+        errorItem:[],
+        total: 0,
+    };
     return new Promise((resolve, reject) => {
 
-        let res = {
-            success: 0,
-            error: 0,
-            errorItem:[],
-            total: 0,
-        };
+
 
         list.forEach(item => {
             const sibjectID = item.subject_id || null;
@@ -35,7 +36,6 @@ const addGrade = (list, userID) => {
         console.log(res)
         setTimeout(() => {
             resolve(res)
-            // console.log(res)
         }, 500);
     })
 

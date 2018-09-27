@@ -51,6 +51,7 @@ app.use('/api/grade-history/student/', gradeHistoryRouter.getGrade);
 app.use('/api/grade-history/student/add', gradeHistoryRouter.addGrade);
 app.use('/api/grade-history/student/delete', gradeHistoryRouter.deleteGrade);
 app.use('/api/grade-history/student/edit', gradeHistoryRouter.editGrade);
+app.use('/api/grade-history/teacher/add', gradeHistoryTeacherRouter.teacherAddrade);
 app.use('/api/grade-history/teacher/edit', gradeHistoryTeacherRouter.teacherEditGrade)
 app.use('/api/grade-history/teacher/delete', gradeHistoryTeacherRouter.teacherDeleteGrade);
 app.use('/api/prediction/single/get-subject', singlePredictRouter.getSubject);
