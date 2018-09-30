@@ -17,7 +17,7 @@ const user = {
         const PW = dataReq.password
 
         let teacherSQL;
-        teacherSQL = "SELECT teacher_id As ID, first_name AS FirstName, last_name AS LastName, role AS Role FROM teacher ";
+        teacherSQL = "SELECT teacher_key As ID, first_name AS FirstName, last_name AS LastName, role AS Role FROM teacher ";
         teacherSQL += "WHERE teacher_id = '" + ID + "' AND pass_word = '" + PW + "'; ";
 
         return db.query(teacherSQL, callback)

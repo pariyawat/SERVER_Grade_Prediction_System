@@ -5,14 +5,14 @@ const Profile = {
     let SQLTeacher;
     SQLTeacher = "SELECT teacher.teacher_id as TeacherID,CONCAT(teacher.first_name, ' ',teacher.last_name) ";
     SQLTeacher += "as Name, teacher.email_address as Email, teacher.role as Role,";
-    SQLTeacher += "group_cpe.group_name as GroupName FROM teacher JOIN group_cpe ON teacher.teacher_id ";
-    SQLTeacher += "= group_cpe.teacher_id WHERE teacher.teacher_id=" + "'" + id + "'";
+    SQLTeacher += "group_cpe.group_name as GroupName FROM teacher JOIN group_cpe ON teacher.teacher_key ";
+    SQLTeacher += "= group_cpe.teacher_key WHERE teacher.teacher_key=" + "'" + id + "'";
 
     let SQLStudent;
     SQLStudent = "SELECT student.student_id AS StudentID, concat(student.first_name,' ',student.last_name) ";
     SQLStudent += "as Name, student.email_address AS Email, student.role AS Role, student.group_name AS GroupName, ";
     SQLStudent += "CONCAT(teacher.first_name, ' ', teacher.last_name) as TeacherName FROM student JOIN group_cpe ";
-    SQLStudent += "ON student.group_name = group_cpe.group_name JOIN teacher ON teacher.teacher_id = group_cpe.teacher_id WHERE student.student_id =" + "'" + id + "'";
+    SQLStudent += "ON student.group_name = group_cpe.group_name JOIN teacher ON teacher.teacher_key = group_cpe.teacher_key WHERE student.student_id =" + "'" + id + "'";
 
 
     let SQLAdmin;
@@ -52,7 +52,7 @@ const Profile = {
     let emailSQL = ` 
     UPDATE teacher
     SET email_address = '${data.email}'
-    WHERE teacher_id = '${data.ID}'
+    WHERE teacher_key = '${data.ID}'
     `
     return db.query(emailSQL, callback)
   },
@@ -61,7 +61,7 @@ const Profile = {
     let emailSQL = `
     UPDATE teacher
     SET pass_word = '${data.password}'
-    WHERE teacher_id = '${data.ID}'
+    WHERE teacher_key = '${data.ID}'
     `
     return db.query(emailSQL, callback)
   },

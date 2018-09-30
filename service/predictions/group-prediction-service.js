@@ -3,7 +3,7 @@ const groupPredictService = {
 
     getGroupByTeacher: (teacherID, callback) => {
 
-        getGroupSQL = ` SELECT group_name FROM group_cpe WHERE teacher_id = '${teacherID}'`
+        getGroupSQL = ` SELECT group_name FROM group_cpe WHERE teacher_key = '${teacherID}'`
         return db.query(getGroupSQL, callback);
     },
 
