@@ -17,6 +17,7 @@ const singlePredictRouter = require('./routes/predictions/single-prediction-rout
 const groupPredictRouter = require('./routes/predictions/group-prediction-router');
 const manageTeacherRouter = require('./routes/manage/manage-tacher-router')
 const manageGroupRouter = require('./routes/manage/manage-group-router')
+const manageStudentRouter = require('./routes/manage/manage-student-router')
 
 const app = express();
 
@@ -74,6 +75,11 @@ app.use('/api/manage/group', manageGroupRouter.getGroup);
 app.use('/api/manage/group/add', manageGroupRouter.addGroup);
 app.use('/api/manage/group/delete', manageGroupRouter.deleteGroup);
 app.use('/api/manage/group/edit', manageGroupRouter.editGroup);
+app.use('/api/manage/student', manageStudentRouter.getStudent);
+app.use('/api/manage/student/upload', manageStudentRouter.uploadStudent);
+app.use('/api/manage/student/delete', manageStudentRouter.deleteStudent);
+app.use('/api/manage/student/chang-pass', manageStudentRouter.changPassStudent);
+app.use('/api/manage/student/edit', manageStudentRouter.editStudent);
 
 
 // catch 404 and forward to error handler
