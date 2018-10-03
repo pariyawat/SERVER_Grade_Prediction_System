@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const teacherGradeService = require('../../service/grade-history/about-grad-teacher')
 const addGradeService = require('../../service/grade-history/teacher-add-grade-service')
+const addGradControl = require('../../controller/grade-history/add-grade-student-control');
 
 const teacherEditGrade = router.put('/', (req, res) => {
-    console.log('aaaaaaaaaaaaaaaaaaaaaaa');
     data = req.body
     teacherGradeService.editGrade(data, (err, row) => {
         if (err) {
@@ -28,6 +28,12 @@ const teacherDeleteGrade = router.delete('/:STD_ID/:SUB_ID', (req, res) => {
             res.json(row);
         }
     })
+})
+
+const teacerAddOne = router.post('/:user',(req, res) => {
+    const data = req.body
+    const user = req.params.user
+    addGradControl.addGradeStudent(data, user, res);
 })
 
 
@@ -67,5 +73,6 @@ const teacherAddrade = router.post('/', async (req, res, next) => {
 module.exports = {
     teacherEditGrade,
     teacherDeleteGrade,
-    teacherAddrade
+    teacherAddrade,
+    teacerAddOne
 }

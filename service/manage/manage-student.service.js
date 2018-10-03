@@ -49,7 +49,6 @@ const manageStudent = {
 
     changeSTDPass: (data, callback) => {
         const { passwordControl, student_id } = data
-        console.log({ passwordControl, student_id })
         const passSQL =
             `UPDATE student SET pass_word = '${passwordControl}' WHERE student_id = '${student_id}'`
 

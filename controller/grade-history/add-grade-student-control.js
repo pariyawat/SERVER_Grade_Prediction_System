@@ -17,9 +17,10 @@ addGrade = (list, userID) => {
             if (sibjectID) {
                 grade.addGrade(item, userID)
                     .then(response => {
-                        if (response.affectedRows == 1) {
+                        console.log(response)
+                        if (response.affectedRows) {
                             output.success.push(item)
-                        } else if (response.affectedRows == 0) {
+                        } else if (!response.affectedRows) {
                             output.error.push(item)
                         }
                     }).catch((error) => {

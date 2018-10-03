@@ -7,6 +7,7 @@ const deleteGradeControl = require('../../controller/grade-history/delete-grade-
 const editGradeControl = require('../../controller/grade-history/edit-grade-student-control');
 
 const addGrade = router.post('/', (req, res, next) => {
+
     const data = req.body
     const user = auth.getUserByToken(req);
     addGradControl.addGradeStudent(data, user.ID, res);
