@@ -30,7 +30,7 @@ const teacherDeleteGrade = router.delete('/:STD_ID/:SUB_ID', (req, res) => {
     })
 })
 
-const teacerAddOne = router.post('/:user',(req, res) => {
+const teacerAddOne = router.post('/:user', (req, res) => {
     const data = req.body
     const user = req.params.user
     addGradControl.addGradeStudent(data, user, res);
@@ -40,30 +40,36 @@ const teacerAddOne = router.post('/:user',(req, res) => {
 
 const teacherAddrade = router.post('/', async (req, res, next) => {
 
-    let output = { error: [], success: [] }
-    data = req.body.data
-    group = req.body.group
-    console.log(data)
+    try {
+        let output = { error: [], success: [] }
+        data = req.body.data
+        group = req.body.group
 
-    for (const std of data) {
-        if (std.student_id) {
-            await addGradeService.teachAddGrad(std, group, (err, row) => {
-                if (err) {
-                    output.error.push(std)
+        for (const std of data) {
+            if (std.student_id) {
+                await addGradeService.teachAddGrad(std, group, (err, row) => {
+                    if (err) {
+                        output.error.push(std)
 
-                } else if (row.affectedRows <= 0) {
-                    output.error.push(std)
-                } else {
-                    output.success.push(std)
-                }
-            })
+                    } else if (row.affectedRows <= 0) {
+                        output.error.push(std)
+                    } else {
+                        output.success.push(std)
+                    }
+                })
 
+            }
         }
+        setTimeout(() => {
+            console.log(output);
+            res.json(output)
+        }, 1000);
+
+    } catch (error) {
+        console.log(error);
     }
-    // res.json(output)
-    setTimeout(() => {
-        res.json(output)
-    }, 500);
+
+
 
 
 })

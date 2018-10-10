@@ -9,15 +9,11 @@ addGrade = (list, userID) => {
     let output = { error: [], success: [] }
     return new Promise((resolve, reject) => {
 
-        // ตัวแปล Subject
-        // const subject = new Subject();
-
         list.forEach(item => {
             const sibjectID = item.subject_id
             if (sibjectID) {
                 grade.addGrade(item, userID)
                     .then(response => {
-                        console.log(response)
                         if (response.affectedRows) {
                             output.success.push(item)
                         } else if (!response.affectedRows) {
@@ -32,7 +28,7 @@ addGrade = (list, userID) => {
         setTimeout(() => {
             console.log(output)
             resolve(output)
-        }, 500);
+        }, 1000);
     })
 
 

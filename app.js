@@ -18,6 +18,8 @@ const groupPredictRouter = require('./routes/predictions/group-prediction-router
 const manageTeacherRouter = require('./routes/manage/manage-tacher-router')
 const manageGroupRouter = require('./routes/manage/manage-group-router')
 const manageStudentRouter = require('./routes/manage/manage-student-router')
+const manageAdminRouter = require('./routes/manage/manage-admin-router')
+const configPredicRouter = require('./routes/predictions/config-predict-router')
 
 const app = express();
 
@@ -66,6 +68,8 @@ app.use('/api/prediction/group/get-group', groupPredictRouter.getGroup);
 app.use('/api/prediction/group/get-student', groupPredictRouter.getStudent);
 app.use('/api/prediction/group/get-subject', groupPredictRouter.getSubject);
 app.use('/api/prediction/group/prediction', groupPredictRouter.prediction);
+app.use('/api/prediction/config', configPredicRouter.getConfig);
+app.use('/api/prediction/config/edit', configPredicRouter.editConfig);
 
 app.use('/api/manage/teacher', manageTeacherRouter.getTeacher);
 app.use('/api/manage/teacher/add', manageTeacherRouter.addTeacher);
@@ -81,6 +85,11 @@ app.use('/api/manage/student/upload', manageStudentRouter.uploadStudent);
 app.use('/api/manage/student/delete', manageStudentRouter.deleteStudent);
 app.use('/api/manage/student/chang-pass', manageStudentRouter.changPassStudent);
 app.use('/api/manage/student/edit', manageStudentRouter.editStudent);
+app.use('/api/manage/admin', manageAdminRouter.getAmin);
+app.use('/api/manage/admin/edit', manageAdminRouter.editAdmin);
+app.use('/api/manage/admin/chang-pass', manageAdminRouter.changePass);
+
+
 
 
 // catch 404 and forward to error handler
