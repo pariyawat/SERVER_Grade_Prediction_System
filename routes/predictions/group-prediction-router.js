@@ -47,11 +47,17 @@ const prediction = router.post('/', (req, res) => {
 
 })
 
+const plotGraph =router.post('/plot', (req, res) => {
+    let data = req.body;
+    predictionControl.poltGraph(data, res)
+})
+
 
 
 module.exports = {
     getGroup,
     getStudent,
     getSubject,
-    prediction
+    prediction,
+    plotGraph
 };

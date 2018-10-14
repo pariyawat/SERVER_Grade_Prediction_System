@@ -1,6 +1,6 @@
 var R = require("js-call-r");
 const chalk = require('chalk');
-const getsName = require('../../service/predictions/group-prediction-service')
+
 const groupPrediction = {
     predict: (data, res) => {
 
@@ -9,23 +9,32 @@ const groupPrediction = {
 
         R.call(__dirname + './Rscript/predict-group.R', { data })
             .then(async (result) => {
-                let datum = result.result[0]
+                let datum = result.result
                 console.log(chalk.blue(JSON.stringify(datum)))
                 res.json(datum);
             })
             .catch(err => {
                 console.log('err = ', err);
-                res.status(404);
+                res.status(500);
                 res.json(err);
             });
+    },
+    poltGraph: (data, res) => {
+
+
+        R.call(__dirname + './Rscript/plot-graph.R',  { data })
+            .then(async (result) => {
+                console.log(chalk.yellow(JSON.stringify(result.result)))
+                res.json(result.result);
+            })
+            .catch(err => {
+                console.log('err = ', err);
+                res.status(500);
+                res.json(err);
+            });
+
     }
 }
-
-// const getName = {
-//     getStdName: (id) => {
-//         return getsName.getStdName(id)
-//     }
-// }
 
 
 module.exports = groupPrediction;

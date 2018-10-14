@@ -68,6 +68,7 @@ app.use('/api/prediction/group/get-group', groupPredictRouter.getGroup);
 app.use('/api/prediction/group/get-student', groupPredictRouter.getStudent);
 app.use('/api/prediction/group/get-subject', groupPredictRouter.getSubject);
 app.use('/api/prediction/group/prediction', groupPredictRouter.prediction);
+app.use('/api/prediction/group/graph', groupPredictRouter.plotGraph);
 app.use('/api/prediction/config', configPredicRouter.getConfig);
 app.use('/api/prediction/config/edit', configPredicRouter.editConfig);
 

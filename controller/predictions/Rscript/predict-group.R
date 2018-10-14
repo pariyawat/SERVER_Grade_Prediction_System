@@ -29,8 +29,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
   )
   dbListTables(mydb)
   rs <- dbGetQuery(mydb, "set character set utf8")
-  gs <- dbGetQuery(mydb, "set character set utf8")
-  ms <- dbGetQuery(mydb, "set character set utf8")
+  
   
   stu_grade <-
     c("SELECT subject_cpe,grade FROM grade_history where student_ID ='",
@@ -65,19 +64,27 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
   means = fetch(rs, n = -1)
   
   stu_name <-
-    c("SELECT CONCAT(first_name,'  ',last_name) as name FROM student where student_id = '",
+    c(
+      "SELECT CONCAT(first_name,'  ',last_name) as name FROM student where student_id = '",
       STD_ID,
-      "'")
+      "'"
+    )
   rs = dbSendQuery(mydb, paste(stu_name, collapse = ""))
   name = fetch(rs, n = -1)
+  
+  Config <-
+    c("SELECT support,confidence FROM asso_config")
+  rs = dbSendQuery(mydb, paste(Config, collapse = ""))
+  assoConfig = fetch(rs, n = -1)
+  configs <- assoConfig / 100
   
   dbDisconnect(mydb)
   
   if (nrow(data.train) < 100) {
-
     ret <-
       list(
         STD_ID = STD_ID,
+        SUB_CPE = SUB_CPE,
         STD_NAME = name$name,
         SUB_NAME = SUB_NAME,
         CREDIT = means$credit,
@@ -135,13 +142,13 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
                         data.student$subject_cpe)
       ))
     
-
+    
     student.dtModel <-
       rpart(formula.tree, data.train.DT, method = "class")
     
     student.pred.DT <-
       predict(student.dtModel, data.test, type = "class")
-
+    
     
     dis <- distinct(select(data.train, SUB_CPE))
     subject.foctor <- c()
@@ -157,21 +164,15 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
       control = list(verbose = F),
       parameter = list(
         minlen = 2,
-        supp = 0.1,
-        conf = 0.5 ,
+        supp = configs[[1]],
+        conf = configs[[2]],
         target = "rules"
       ),
       appearance = list(rhs = subject.foctor, default = "lhs")
     )
-    if (length(rules.all) == 0) {
-      rules <- rules.all
-    } else {
-      rules.all <- sort(rules.all, by = "confidence")
-      subsetRules <-
-        which(colSums(is.subset(rules.all, rules.all)) > 1)
-      rules <- rules.all[-subsetRules] # remove subset rules.
-      length(rules.all)
-    }
+    
+    rules <- sort(rules.all, by = "confidence")
+    
     ###############################################################################
     
     rulesMatch <- is.subset(rules@lhs, data.test)
@@ -198,6 +199,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
       list(
         STD_ID = STD_ID,
         STD_NAME = name$name,
+        SUB_CPE = SUB_CPE,
         SUB_NAME = SUB_NAME,
         CREDIT = means$credit,
         DT  = list(
@@ -211,141 +213,70 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
 
 
 
-Pidictiongroup = function(jsons) {
-  
 
-count.subject <- c()
-count.subject.cpe <- c()
-for (i.c in 1:length(jsons)) {
-  count.subject[i.c] <- jsons[[i.c]]$STD_ID
-  count.subject.cpe[i.c] <- jsons[[i.c]]$SUB_NAME
+
+results <- list()
+
+for (x in 1:length(jsons)) {
+  results[x] <-
+    list(Pidiction(jsons[[x]]$STD_ID, jsons[[x]]$SUB_CPE, jsons[[x]]$SUB_NAME))
 }
-count.subject.cpe <- unique(count.subject.cpe)
-cnt.s <- as.numeric(table(count.subject)[1])
-cnts.s <- cnt.s
-cnt <- 1
-c <- 1
-resultqr = list()
 
-while (cnt.s < length(jsons) + 1) {
-  print(paste(cnt, cnt.s))
-  
-  json.s <- jsons[cnt:cnt.s]
-  
-  results <- list()
-  
-  for (x in 1:length(json.s)) {
-    results[x] <-
-      list(Pidiction(json.s[[x]]$STD_ID, json.s[[x]]$SUB_CPE, json.s[[x]]$SUB_NAME))
-  }
-  
-  mean.g <- c()
-  creditx <- c()
-  meanx <- c()
-  
-  for (i in 5:6) {
-    for (m in 1:length(results)) {
-      if (results[[c(m, i)]]$Grade == "D") {
-        mean.g[m] <- 1 * results[[m]]$CREDIT
-        creditx[m] <-  results[[m]]$CREDIT
-      } else if (results[[c(m, i)]]$Grade == "D+") {
-        mean.g[m] <- 1.5 * results[[m]]$CREDIT
-        creditx[m] <-  results[[m]]$CREDIT
-      } else if (results[[c(m, i)]]$Grade == "C") {
-        mean.g[m] <- 2 * results[[m]]$CREDIT
-        creditx[m] <-  results[[m]]$CREDIT
-      } else if (results[[c(m, i)]]$Grade == "C+") {
-        mean.g[m] <- 2.5 * results[[m]]$CREDIT
-        creditx[m] <-  results[[m]]$CREDIT
-      } else if (results[[c(m, i)]]$Grade == "B") {
-        mean.g[m] <- 3 * results[[m]]$CREDIT
-        creditx[m] <-  results[[m]]$CREDIT
-      } else if (results[[c(m, i)]]$Grade == "B+") {
-        mean.g[m] <- 3.5 * results[[m]]$CREDIT
-        creditx[m] <-  results[[m]]$CREDIT
-      } else if (results[[c(m, i)]]$Grade == "A") {
-        mean.g[m] <- 4 * results[[m]]$CREDIT
-        creditx[m] <-  results[[m]]$CREDIT
-      } else if (results[[c(m, i)]]$Grade == "S") {
-        mean.g[m] <- 1 * results[[m]]$CREDIT
-        creditx[m] <-  results[[m]]$CREDIT
-      } else if (results[[c(m, i)]]$Grade == "?") {
-        mean.g[m] <- 0 * results[[m]]$CREDIT
-        creditx[m] <-  0
-      } else {
-        mean.g[m] <- 0 * results[[m]]$CREDIT
-        creditx[m] <-  results[[m]]$CREDIT
-      }
-    }
-    if (sum(mean.g) == 0) {
-      meanx <- append(meanx, 0)
+mean.g <- c()
+creditx <- c()
+meanx <- c()
+
+for (i in 6:7) {
+  for (m in 1:length(results)) {
+    if (results[[c(m, i)]]$Grade == "D") {
+      mean.g[m] <- 1 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "D+") {
+      mean.g[m] <- 1.5 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "C") {
+      mean.g[m] <- 2 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "C+") {
+      mean.g[m] <- 2.5 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "B") {
+      mean.g[m] <- 3 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "B+") {
+      mean.g[m] <- 3.5 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "A") {
+      mean.g[m] <- 4 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "S") {
+      mean.g[m] <- 4 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
+    } else if (results[[c(m, i)]]$Grade == "?") {
+      mean.g[m] <- 0 * results[[m]]$CREDIT
+      creditx[m] <-  0
     } else {
-      meanx <- append(meanx, round(sum(mean.g) / sum(creditx), 2))
+      mean.g[m] <- 0 * results[[m]]$CREDIT
+      creditx[m] <-  results[[m]]$CREDIT
     }
   }
-  
-  #convert return of function to list
-  #rusu <- list(result = results, gpaDT = meanx[1], gpaASSO = meanx[2])
-  
-  resultq <- list(results = results,
-                  gpaDT = meanx[1],
-                  gpaASSO = meanx[2])
-  resultqr[c] <- list(resultq)
-  cnt = cnt + cnts.s
-  cnt.s = cnt.s + cnts.s
-  meanx <- c()
-  mean.g <- c()
-  creditx <- c()
-  c = c + 1
-}
-
-Sub.cpe <- list()
-
-for (n in 1:length(results)) {
-  gradeSUM <- list()
-  s <- 1
-  
-  for (b in 5:6) {
-    count.grade <- c(0, 0, 0, 0, 0, 0, 0, 0, 0)
-    for (v in 1:length(resultqr)) {
-      if (resultqr[[v]]$results[[c(n, b)]]$Grade == "F") {
-        count.grade[1] <- count.grade[1] + 1
-      } else if (resultqr[[v]]$results[[c(n, b)]]$Grade == "D") {
-        count.grade[2] <- count.grade[2] + 1
-      } else if (resultqr[[v]]$results[[c(n, b)]]$Grade == "D+") {
-        count.grade[3] <- count.grade[3] + 1
-      } else if (resultqr[[v]]$results[[c(n, b)]]$Grade == "C") {
-        count.grade[4] <- count.grade[4] + 1
-      } else if (resultqr[[v]]$results[[c(n, b)]]$Grade == "C+") {
-        count.grade[5] <- count.grade[5] + 1
-      } else if (resultqr[[v]]$results[[c(n, b)]]$Grade == "B") {
-        count.grade[6] <- count.grade[6] + 1
-      } else if (resultqr[[v]]$results[[c(n, b)]]$Grade == "B+") {
-        count.grade[7] <- count.grade[7] + 1
-      } else if (resultqr[[v]]$results[[c(n, b)]]$Grade == "A") {
-        count.grade[8] <- count.grade[8] + 1
-      } else {
-        count.grade[9] <- count.grade[9] + 1
-      }
-    }
-    gradeSUM[s] <- list(count.grade)
-    s = s + 1
+  if (sum(mean.g) == 0) {
+    meanx <- append(meanx, 0)
+  } else {
+    meanx <- append(meanx, round(sum(mean.g) / sum(creditx), 2))
   }
-  Sub.cpes <-
-    list(
-      SUB_NAME = count.subject.cpe[n],
-      graphDT = gradeSUM[[1]],
-      graphASSO = gradeSUM[[2]]
-    )
-  Sub.cpe[n] <- list(Sub.cpes)
 }
 
-data <-
-  list(data = resultqr, graph = Sub.cpe)
-return(data)
-}
+#convert return of function to list
+#rusu <- list(result = results, gpaDT = meanx[1], gpaASSO = meanx[2])
 
-result <- list(Pidictiongroup(jsons))
+result <- list(results = results,
+               gpaDT = meanx[1],
+               gpaASSO = meanx[2])
+
+
+
+
 
 output <- list(result = result)
 
