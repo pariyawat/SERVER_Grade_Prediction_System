@@ -36,6 +36,16 @@ const changePass = router.put('/', (req, res) => {
         }
     })
 })
+const learnDataUpload = router.post( '/', async (req, res) => {
+    const data = await req.body
+    const lengths = await data.length - 1
+    // console.log('+++++++++++++++++++++++++++++++++++++++++++++\n',data)
+    for(let i = 0; i < lengths; i++){
+     await   manageAdmin.learnDataUpload(data[i])
+    }
+    res.json(200,'success')
 
 
-module.exports = { getAmin, editAdmin, changePass }
+})
+
+module.exports = { getAmin, editAdmin, changePass, learnDataUpload }

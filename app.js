@@ -89,6 +89,7 @@ app.use('/api/manage/student/edit', manageStudentRouter.editStudent);
 app.use('/api/manage/admin', manageAdminRouter.getAmin);
 app.use('/api/manage/admin/edit', manageAdminRouter.editAdmin);
 app.use('/api/manage/admin/chang-pass', manageAdminRouter.changePass);
+app.use('/api/manage/admin/upload', manageAdminRouter.learnDataUpload);
 
 
 

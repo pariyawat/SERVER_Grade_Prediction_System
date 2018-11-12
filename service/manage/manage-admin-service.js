@@ -20,6 +20,26 @@ const manageAdmin = {
             SET pass_word = '${data.passwordControl}'
             WHERE admin_id = '${data.admin_id}'`
         return db.query(changeSQL, callback)
+    },
+
+    learnDataUpload: (data) => {
+
+        const key = Object.keys(data)
+        const columnName = [];
+        const columnValue = [];
+
+        for (let i = 0; i < key.length; i++) {
+            if (data[key[i]] !== '') {
+                columnName.push(key[i]);
+                columnValue.push("'"+ data[key[i]] + "'");
+            }
+        }
+        let uploadSQL = 'INSERT INTO learning_copy1 (' + columnName.toString()  + ') ';
+        uploadSQL += 'VALUES (' + columnValue.toString()  + ');';
+
+        db.query(uploadSQL)
+        // console.log(uploadSQL)
+
     }
 }
 
