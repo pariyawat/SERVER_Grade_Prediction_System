@@ -80,7 +80,7 @@ Pidiction = function(STD_ID, SUB_CPE, SUB_NAME) {
   
   dbDisconnect(mydb)
   
-  if (nrow(data.train) < 100) {
+  if (nrow(data.train) < 30) {
     ret <-
       list(
         STD_ID = STD_ID,
