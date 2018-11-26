@@ -10,7 +10,7 @@ const prediction = {
         
         R.call(__dirname+'./Rscript/predict.R', {data})
         .then((result) => {
-            console.log(chalk.blue(JSON.stringify(data)))
+            console.log(chalk.blue(JSON.stringify(result.result)))
             res.json(result); 
             
         })

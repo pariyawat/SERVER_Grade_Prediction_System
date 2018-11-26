@@ -255,9 +255,9 @@ for (i in 4:5) {
     }
   }
   if (sum(mean.g) == 0) {
-    meanx <- append(meanx, 0)
+    meanx <- append(meanx, format(round(0.00), nsmall = 2))
   } else {
-    meanx <- append(meanx, round(sum(mean.g) / sum(creditx), 2))
+    meanx <- append(meanx, format(round(sum(mean.g) / sum(creditx), 2), nsmall = 2))
   }
 }
 
